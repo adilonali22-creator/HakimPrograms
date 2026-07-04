@@ -3,112 +3,346 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HakimApp Otopark</title>
+    <title>HakimApp Otopark V12 - AI KAMERA SÜRÜMÜ</title>
     <style>
-        body { font-family: sans-serif; background: #000; color: #fff; text-align: center; padding: 20px; }
-        .menu-box { background: #111; padding: 20px; border-radius: 20px; margin: 15px 0; border: 2px solid #333; }
-        h1 { font-weight: 900; color: #fff; margin-bottom: 30px; }
-        button, label { display: block; width: 100%; padding: 20px; font-size: 18px; font-weight: 900; border-radius: 15px; border: none; cursor: pointer; margin: 10px 0; user-select: none; }
-        .btn-kayit { background: #28a745; color: #fff; }
+        body { font-family: sans-serif; background: #000; color: #fff; text-align: center; padding: 20px; margin: 0; }
+        .menu-box { background: #111; padding: 20px; border-radius: 20px; margin: 15px auto; max-width: 500px; border: 2px solid #333; }
+        h1 { font-weight: 900; margin-bottom: 25px; }
+        h3 { margin-top: 5px; color: #ccc; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; }
+        button, label { display: block; width: 100%; padding: 20px; font-size: 18px; font-weight: 900; border-radius: 12px; border: none; cursor: pointer; margin: 10px 0; text-transform: uppercase; text-align: center; box-sizing: border-box; }
+        .btn-giriş { background: #28a745; color: #fff; }
+        .btn-giriş:active { background: #1e7e34; }
+        .btn-kamera { background: #17a2b8; color: #fff; }
+        .btn-kamera:active { background: #138496; }
         .btn-liste { background: #ffc107; color: #000; }
+        .btn-liste:active { background: #d39e00; }
         .btn-cikis { background: #dc3545; color: #fff; }
-        .btn-yasak { background: #6c757d; color: #fff; }
-        .btn-temizle { background: #bd2130; color: #fff; }
-        input { width: 90%; padding: 15px; margin-bottom: 10px; border-radius: 10px; border: none; text-transform: uppercase; text-align: center; font-weight: bold; font-size: 18px; }
-        .search-input { width: 90%; padding: 12px; margin: 10px auto; background: #333; color: #fff; border: 1px solid #555; border-radius: 8px; font-size: 16px; display: block; }
-        #aracListesi, #yasakliListesi { margin-top: 15px; background: #222; padding: 15px; border-radius: 10px; display: none; text-align: left; }
-        .arac-item { padding: 8px 0; border-bottom: 1px solid #333; font-size: 16px; display: flex; justify-content: space-between; align-items: center; }
-        .flex-buttons { display: flex; gap: 10px; }
-        .flex-buttons button { padding: 15px; font-size: 15px; }
+        .btn-cikis:active { background: #bd2130; }
+        .btn-yasak-islem { background: #e0a800; color: #000; font-weight: 900; }
+        .btn-yasak-islem:active { background: #c69500; }
+        .btn-vardiya { background: #fd7e14; color: #fff; font-size: 14px; padding: 15px; }
+        .btn-temizle { background: #bd2130; color: #fff; font-size: 14px; padding: 15px; }
+        input { width: 100%; padding: 18px; margin-bottom: 12px; border-radius: 10px; border: 2px solid #444; background: #222; color: #fff; text-transform: uppercase; text-align: center; font-weight: bold; font-size: 22px; box-sizing: border-box; }
+        input:focus { border-color: #ffc107; outline: none; }
+        .search-input { width: 100%; padding: 12px; margin: 10px 0; background: #333; color: #fff; border: 1px solid #555; border-radius: 8px; font-size: 16px; text-align: left; box-sizing: border-box; }
+        .panel-icerik { margin-top: 15px; background: #151515; padding: 15px; border-radius: 10px; text-align: left; border: 1px solid #333; }
+        .arac-item { padding: 12px; border-bottom: 1px solid #222; font-size: 16px; display: flex; justify-content: space-between; align-items: center; background: #1a1a1a; margin-bottom: 5px; border-radius: 6px; }
+        .flex-buttons { display: flex; gap: 10px; margin-bottom: 10px; }
+        .flex-buttons button { margin: 0; flex: 1; }
+        .status-loading { color: #ffc107; font-weight: bold; text-align: center; display: none; padding: 10px; font-size: 16px; }
     </style>
 </head>
 <body>
 
-    <h1>🅿️ HAKIMAPP</h1>
+    <h1>🅿️ HAKIMAPP V12</h1>
 
     <div class="menu-box">
-        <label for="kamera" class="btn-kayit">📸 OTOPARK GİRİŞ KAYIT</label>
-        <input type="file" id="kamera" accept="image/*" capture="environment" style="display:none;" onchange="plakaOku(this)">
-        <button class="btn-kayit" style="background:#17a2b8;" onclick="manuelGirisYap()">⌨️ ELLE GİRİŞ KAYDI YAP</button>
+        <h3>🚗 OTOPARK GİRİŞ KAYDI</h3>
+        <label for="kameraInput" class="btn-kamera">📸 AI KAMERA İLE PLAKA TARAT</label>
+        <input type="file" id="kameraInput" accept="image/*" capture="environment" style="display:none;" onchange="plakaOkuKamera(this)">
+        <div id="loadingStatus" class="status-loading">⏳ YAPAY ZEKA GÖRÜNTÜYÜ SIKIŞTIRIYOR VE PLAKAYI OKUYOR...</div>
+        <hr style="border: 1px solid #333; margin: 15px 0;">
+        <input type="text" id="girisPlakaInput" placeholder="GİRECEK ARACIN PLAKASI">
+        <button class="btn-giriş" onclick="direktGirisKaydet()">📥 ELLE YAZILAN PLAKAYI KAYDET</button>
     </div>
 
     <div class="menu-box">
-        <button class="btn-liste" onclick="toggleListe()">🚗 ARAÇLAR (KONTROL)</button>
-        <div id="aracListesi">
-            <input type="text" id="aracAra" class="search-input" placeholder="🔍 Araç Ara (Plaka Yazın)..." onkeyup="aracFiltrele()">
-            <div id="listeIcerik"><p>Sistem Hazır...</p></div>
+        <button class="btn-liste" onclick="toggleListe()">🚗 İÇERİDEKİ ARABALARI GÖSTER / GİZLE</button>
+        <div id="panelAraclar" style="display: none;" class="panel-icerik">
+            <input type="text" id="aracAra" class="search-input" placeholder="🔍 Plaka yazarak anlık filtrele..." onkeyup="aracFiltrele()">
+            <div id="listeIcerik"></div>
         </div>
     </div>
 
     <div class="menu-box">
-        <input type="text" id="plaka" placeholder="PLAKA GİRİN">
-        <button class="btn-cikis" onclick="cikisYap()">ÇIKIŞ YAP & HESAPLA</button>
+        <h3>💰 OTOPARK ÇIKIŞ HESAPLAMA</h3>
+        <input type="text" id="cikisPlakaInput" placeholder="ÇIKACAK ARACIN PLAKASI">
+        <button class="btn-cikis" onclick="cikisYap()">💸 ÇIKIŞ YAP VE ÜCRET HESAPLA</button>
     </div>
 
     <div class="menu-box">
+        <h3>🚫 KARA LİSTE (ARAÇ YASAKLAMA)</h3>
+        <input type="text" id="yasaklanacakPlakaInput" placeholder="YASAKLANACAK PLAKAYI YAZIN">
+        <button class="btn-yasak-islem" onclick="arabaYasakla()">🚫 BU PLAKAYI KESİN YASAKLA</button>
+        
+        <hr style="border: 1px solid #333; margin: 15px 0;">
+        
         <div class="flex-buttons">
-            <button class="btn-yasak" onclick="arabaYasakla()">🚫 ARABA YASAKLA</button>
-            <button class="btn-temizle" onclick="tumArabalariSil()">🗑️ TÜM ARABALARI SİL</button>
+            <button class="btn-vardiya" onclick="sadeceOtoparkiTemizle()">🧹 VARDİYA SONU ARABALARI SİL</button>
+            <button class="btn-temizle" onclick="tumSistemiSifirla()">🗑️ HER ŞEYİ KÖKTEN SİL</button>
         </div>
-        <button class="btn-liste" style="background:#444; color:#fff; padding: 10px; font-size: 14px;" onclick="toggleYasakliListe()">🚫 Yasaklı Plakaları Göster</button>
-        <div id="yasakliListesi"></div>
+        
+        <button class="btn-liste" style="background:#333; color:#fff;" onclick="toggleYasakliListe()">👁️ Yasaklı Listesini Göster/Gizle</button>
+        
+        <div id="panelYasaklilar" style="display: none;" class="panel-icerik">
+            <input type="text" id="yasakliAra" class="search-input" placeholder="🔍 Yasaklı plakalarda ara..." onkeyup="yasakliFiltrele()">
+            <div id="yasakliListeIcerik"></div>
+        </div>
     </div>
 
     <script>
+        let ARAC_VERITABANI = [];
+        let YASAKLI_VERITABANI = [];
+        const SAATLIK_UCRET = 40;
         const API_TOKEN = "7b62ff5677db55f09f46dfe58a9e81c36cd18e89";
-        const SAATLIK_UCRET = 40; // Her saat için sabit 40 Denar tarife
 
         window.onload = function() {
+            try {
+                let localOtopark = localStorage.getItem("HAKIM_PRO_OTOPARK_DATA");
+                ARAC_VERITABANI = localOtopark ? JSON.parse(localOtopark) : [];
+                if (!Array.isArray(ARAC_VERITABANI)) ARAC_VERITABANI = [];
+            } catch(e) { ARAC_VERITABANI = []; }
+
+            try {
+                let localYasakli = localStorage.getItem("HAKIM_PRO_YASAKLI_DATA");
+                YASAKLI_VERITABANI = localYasakli ? JSON.parse(localYasakli) : [];
+                if (!Array.isArray(YASAKLI_VERITABANI)) YASAKLI_VERITABANI = [];
+            } catch(e) { YASAKLI_VERITABANI = []; }
+
             listeyiGuncelle();
             yasakliListesiniGuncelle();
         };
 
-        // Plaka formatını temizleme (Boşlukları ve özel karakterleri siler)
-        function formatPlaka(str) {
+        function otoparkHafizaKaydet() {
+            try { localStorage.setItem("HAKIM_PRO_OTOPARK_DATA", JSON.stringify(ARAC_VERITABANI)); } catch(e) {}
+        }
+
+        function yasakliHafizaKaydet() {
+            try { localStorage.setItem("HAKIM_PRO_YASAKLI_DATA", JSON.stringify(YASAKLI_VERITABANI)); } catch(e) {}
+        }
+
+        function temizFormat(str) {
+            if(!str) return "";
             return str.toUpperCase().replace(/[^A-Z0-9]/g, "").trim();
         }
 
-        // Orijinal Kamera Tetikleme ve API Entegrasyonu
-        function plakaOku(input) {
+        // GELİŞTİRİLEN YER: KAMERADAN GELEN BÜYÜK RESMİ AI İÇİN ARKA PLANDA SIKIŞTIRAN MOTOR
+        async function plakaOkuKamera(input) {
             if (!input.files || input.files.length === 0) return;
+            let loadingEl = document.getElementById("loadingStatus");
+            loadingEl.style.display = "block"; 
             
-            alert("Fotoğraf alındı, plaka çözümleniyor...");
             let file = input.files[0];
-            let formData = new FormData();
-            formData.append('upload', file);
-            formData.append('regions', 'mk'); // Kuzey Makedonya bölgesi öncelikli
+            
+            // Resmi sıkıştırmak için HTML5 Canvas mekanizması
+            let reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function(event) {
+                let img = new Image();
+                img.src = event.target.result;
+                img.onload = async function() {
+                    let canvas = document.createElement('canvas');
+                    let ctx = canvas.getContext('2d');
+                    
+                    // Maksimum genişliği 1024px yapıyoruz (AI tanıma için en ideal ve hızlı boyut)
+                    let max_width = 1024;
+                    let scale = max_width / img.width;
+                    canvas.width = max_width;
+                    canvas.height = img.height * scale;
+                    
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    // Resmi %70 kalite ile JPEG formatına sıkıştırıp Blob'a çeviriyoruz
+                    canvas.toBlob(async function(blob) {
+                        let formData = new FormData();
+                        formData.append('upload', blob, 'plaka.jpg');
+                        formData.append('regions', 'mk'); // Bölgeyi Kuzey Makedonya olarak sabitliyoruz
 
-            fetch('https://api.platerecognizer.com/v1/plate-reader/', {
-                method: 'POST',
-                headers: {'Authorization': 'Token ' + API_TOKEN},
-                body: formData
-            })
-            .then(res => {
-                if (!res.ok) throw new Error("API yanıt vermedi.");
-                return res.json();
-            })
-            .then(data => {
-                if (data.results && data.results.length > 0) {
-                    let p = formatPlaka(data.results[0].plate);
-                    document.getElementById('plaka').value = p;
-                    girisKaydet(p);
-                } else { 
-                    alert("Plaka net okunamadı. Lütfen kutuya elle yazarak giriş/çıkış yapın."); 
+                        try {
+                            let response = await fetch('https://api.platerecognizer.com/v1/plate-reader/', {
+                                method: 'POST',
+                                headers: {'Authorization': 'Token ' + API_TOKEN},
+                                body: formData
+                            });
+                            if(!response.ok) throw new Error("Yapay Zeka Servis Hatası");
+                            let data = await response.json();
+                            
+                            if (data.results && data.results.length > 0) {
+                                let okunanPlaka = temizFormat(data.results[0].plate);
+                                document.getElementById('girisPlakaInput').value = okunanPlaka;
+                                document.getElementById('cikisPlakaInput').value = okunanPlaka;
+                                loadingEl.style.display = "none";
+                                girisMekanizmasi(okunanPlaka);
+                            } else {
+                                loadingEl.style.display = "none";
+                                alert("AI Plakayı net göremedi! Lütfen açıyı değiştirip tekrar deneyin veya elle yazın.");
+                            }
+                        } catch (error) {
+                            loadingEl.style.display = "none";
+                            alert("Bağlantı hatası! Plakayı elle yazarak kaydedin.");
+                        }
+                    }, 'image/jpeg', 0.7);
                 }
-            })
-            .catch(err => {
-                console.error(err);
-                alert("Bağlantı veya API hatası oluştu! Lütfen elle işlem yapın.");
-            });
+            };
+            input.value = "";
         }
 
-        function manuelGirisYap() {
-            let p = formatPlaka(document.getElementById('plaka').value);
-            if(!p) {
-                alert("Lütfen önce geçerli bir plaka yazın!");
+        function direktGirisKaydet() {
+            let p = temizFormat(document.getElementById('girisPlakaInput').value);
+            if(!p) { alert("Hata: Lütfen bir plaka yazın!"); return; }
+            girisMekanizmasi(p);
+        }
+
+        function girisMekanizmasi(p) {
+            if (YASAKLI_VERITABANI.includes(p)) {
+                alert(`⚠️ GİRİŞ ENGELLENDİ!\n"${p}" plakası kara listededir. Bu araç otoparka giremez!`);
                 return;
             }
-            girisKaydet(p);
+            if (ARAC_VERITABANI.find(a => a.plaka === p)) {
+                alert(`Hata: ${p} zaten otoparkta kayıtlı!`);
+                return;
+            }
+            ARAC_VERITABANI.push({ plaka: p, girisZamani: new Date().getTime() });
+            otoparkHafizaKaydet();
+            listeyiGuncelle();
+            alert(`Kayıt Başarılı!\nAraç: ${p}`);
+            document.getElementById('girisPlakaInput').value = "";
         }
 
-        function girisKaydet(plaka
+        function cikisYap() {
+            let p = temizFormat(document.getElementById('cikisPlakaInput').value);
+            if(!p) { alert("Hata: Çıkış yapılacak plaka yazın!"); return; }
+
+            let idx = ARAC_VERITABANI.findIndex(a => a.plaka === p);
+            if (idx === -1) { alert("Hata: Plaka bulunamadı!"); return; }
+
+            let arac = ARAC_VERITABANI[idx];
+            let dk = Math.floor((new Date().getTime() - arac.girisZamani) / 60000); 
+            let tamSaat = Math.floor(dk / 60);
+            let kalanDakika = dk % 60;
+            let ucretlendirilecekSaat = tamSaat;
+
+            if (tamSaat === 0) { ucretlendirilecekSaat = 1; } 
+            else if (kalanDakika > 7) { ucretlendirilecekSaat += 1; }
+
+            let toplamUcret = ucretlendirilecekSaat * SAATLIK_UCRET;
+            alert(`💰 KASA\nAraç: ${p}\nSüre: ${dk} Dk\nÜcret: ${toplamUcret} Denar`);
+
+            ARAC_VERITABANI.splice(idx, 1);
+            otoparkHafizaKaydet();
+            document.getElementById('cikisPlakaInput').value = "";
+            listeyiGuncelle();
+        }
+
+        function listeyiGuncelle() {
+            let div = document.getElementById("listeIcerik");
+            if (!div) return;
+            if (ARAC_VERITABANI.length === 0) {
+                div.innerHTML = "<p style='color:#777; text-align:center;'>Otoparkta araç yok.</p>";
+                return;
+            }
+            let html = "";
+            ARAC_VERITABANI.forEach(arac => {
+                let giris = new Date(arac.girisZamani).toLocaleTimeString();
+                html += `<div class="arac-item otopark-arac" data-plaka="${arac.plaka}"><span>🚘 <b>${arac.plaka}</b></span> <span style='color:#ffc107;'>Giriş: ${giris}</span></div>`;
+            });
+            div.innerHTML = html;
+            aracFiltrele();
+        }
+
+        function toggleListe() {
+            let pnl = document.getElementById("panelAraclar");
+            pnl.style.display = (pnl.style.display === "none") ? "block" : "none";
+            if(pnl.style.display === "block") listeyiGuncelle();
+        }
+
+        function aracFiltrele() {
+            let ara = temizFormat(document.getElementById("aracAra").value);
+            let el = document.getElementsByClassName("otopark-arac");
+            for (let i = 0; i < el.length; i++) {
+                let plaka = el[i].getAttribute("data-plaka");
+                el[i].style.display = plaka.includes(ara) ? "flex" : "none";
+            }
+        }
+
+        function sadeceOtoparkiTemizle() {
+            if (ARAC_VERITABANI.length === 0) { alert("Otopark listesi zaten boş!"); return; }
+            if (!confirm("Vardiya sonu temizliği yapmak istiyor musunuz? (İçerideki arabalar silinecek, yasaklılar KALACAK)")) return;
+            if (!confirm("Emin misiniz? Bu işlem içerideki tüm aktif kayıtları temizler!")) return;
+
+            ARAC_VERITABANI = [];
+            localStorage.removeItem("HAKIM_PRO_OTOPARK_DATA");
+            listeyiGuncelle();
+            
+            document.getElementById('girisPlakaInput').value = "";
+            document.getElementById('cikisPlakaInput').value = "";
+            alert("Günlük otopark listesi temizlendi. Yasaklı listesi korundu!");
+        }
+
+        function tumSistemiSifirla() {
+            if (!confirm("DİKKAT: Tüm sistemi sıfırlamak istiyor musunuz? (Hem arabalar hem yasaklılar SİLİNECEK)")) return;
+            if (!confirm("SON UYARI: Emin misiniz? Kara listedeki tüm plakalar da kaybolacak!")) return;
+
+            localStorage.clear();
+            ARAC_VERITABANI = [];
+            YASAKLI_VERITABANI = [];
+            
+            listeyiGuncelle();
+            yasakliListesiniGuncelle();
+            
+            document.getElementById('cikisPlakaInput').value = "";
+            document.getElementById('girisPlakaInput').value = "";
+            document.getElementById('yasaklanacakPlakaInput').value = "";
+            
+            alert("Sistem hafızası tamamen sıfırlandı.");
+        }
+
+        function arabaYasakla() {
+            try {
+                let kutu = document.getElementById('yasaklanacakPlakaInput');
+                let p = temizFormat(kutu.value);
+                if(!p) { alert("Hata: Lütfen yasaklamak istediğiniz plakayı kutuya yazın!"); return; }
+                if (!Array.isArray(YASAKLI_VERITABANI)) YASAKLI_VERITABANI = [];
+                if(YASAKLI_VERITABANI.includes(p)) { alert("Bu araç zaten kara listede mevcut."); return; }
+
+                YASAKLI_VERITABANI.push(p);
+                yasakliHafizaKaydet(); 
+                
+                kutu.value = "";
+                yasakliListesiniGuncelle();
+                alert(`"${p}" plakası başarıyla kara listeye alındı ve kilitlendi.`);
+            } catch (err) {
+                alert("Hata: " + err.message);
+            }
+        }
+
+        function toggleYasakliListe() {
+            let pnl = document.getElementById("panelYasaklilar");
+            pnl.style.display = (pnl.style.display === "none") ? "block" : "none";
+            if(pnl.style.display === "block") yasakliListesiniGuncelle();
+        }
+
+        function yasakliListesiniGuncelle() {
+            let div = document.getElementById("yasakliListeIcerik");
+            if (!div) return;
+            if (!Array.isArray(YASAKLI_VERITABANI) || YASAKLI_VERITABANI.length === 0) {
+                div.innerHTML = "<p style='color:#777; text-align:center;'>Yasaklı araç bulunmuyor.</p>";
+                return;
+            }
+            let html = "";
+            YASAKLI_VERITABANI.forEach((plaka, index) => {
+                html += `<div class="arac-item yasakli-arac" data-plaka="${plaka}" style="color:#ff4d4d;"><span>🚫 <b>${plaka}</b></span> <button onclick="yasakKaldir(${index})" style="width:auto; padding:6px 12px; background:#fff; color:#000; font-weight:bold; border-radius:6px; margin:0;">Yasağı Kaldır</button></div>`;
+            });
+            div.innerHTML = html;
+            yasakliFiltrele();
+        }
+
+        function yasakliFiltrele() {
+            let ara = temizFormat(document.getElementById("yasakliAra").value);
+            let el = document.getElementsByClassName("yasakli-arac");
+            for (let i = 0; i < el.length; i++) {
+                let plaka = el[i].getAttribute("data-plaka");
+                el[i].style.display = plaka.includes(ara) ? "flex" : "none";
+            }
+        }
+
+        function yasakKaldir(idx) {
+            if (Array.isArray(YASAKLI_VERITABANI)) {
+                YASAKLI_VERITABANI.splice(idx, 1);
+                yasakliHafizaKaydet();
+                yasakliListesiniGuncelle();
+            }
+        }
+    </script>
+</body>
+</html>
